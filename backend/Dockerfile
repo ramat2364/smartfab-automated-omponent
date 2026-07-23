@@ -1,15 +1,17 @@
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
 
+# Install OpenSSL and CA certificates for Prisma runtime
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 # Copy package configurations
 COPY package*.json ./
-RUN apk add --no-cache openssl libc6-compat
 
 # Install packages
 RUN npm install
 
-# Copy source codes
+# Copy source code
 COPY . .
 
 # Generate Prisma Client
