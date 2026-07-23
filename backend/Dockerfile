@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copy package configurations
 COPY package*.json ./
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl libc6-compat
 
 # Install packages
 RUN npm install
