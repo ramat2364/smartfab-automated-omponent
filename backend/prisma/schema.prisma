@@ -1,0 +1,257 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CEO
+  PLANT_HEAD
+  PRODUCTION_MANAGER
+  MAINTENANCE_ENGINEER
+  QUALITY_ENGINEER
+  ADMIN
+}
+
+enum Criticality {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum MachineStatus {
+  OPERATIONAL
+  MAINTENANCE
+  WARNING
+  ERROR
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum AlertStatus {
+  ACTIVE
+  RESOLVED
+}
+
+enum DefectStatus {
+  PENDING
+  INVESTIGATING
+  RESOLVED
+}
+
+model User {
+  id            String            @id @default(uuid())
+  email         String            @unique
+  passwordHash  String
+  name          String
+  role          Role
+  plantAccessId String?           // If null, cross-plant (e.g. CEO, Admin)
+  plantAccess   Plant?            @relation(fields: [plantAccessId], references: [id])
+  refreshTokens RefreshToken[]
+  productionEntries ProductionEntry[]
+  assignedAlerts    MaintenanceAlert[]
+  maintenanceLogs   MaintenanceLog[]
+  defectEntries     DefectEntry[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Plant {
+  id            String           @id @default(uuid())
+  name          String           @unique // Pune, Nashik, Chennai
+  code          String           @unique
+  location      String
+  users         User[]
+  lines         ProductionLine[]
+  productionEntries ProductionEntry[]
+  defectEntries     DefectEntry[]
+  energyReadings    EnergyReading[]
+  machines          Machine[]
+  createdAt     DateTime         @default(now())
+}
+
+model ProductionLine {
+  id            String           @id @default(uuid())
+  name          String
+  code          String
+  plantId       String
+  plant         Plant            @relation(fields: [plantId], references: [id], onDelete: Cascade)
+  machines      Machine[]
+  productionEntries ProductionEntry[]
+  defectEntries     DefectEntry[]
+  energyReadings    EnergyReading[]
+  createdAt     DateTime         @default(now())
+
+  @@unique([plantId, code])
+}
+
+model Shift {
+  id                String            @id @default(uuid())
+  name              String            @unique // Shift A (06:00 - 14:00), Shift B (14:00 - 22:00), Shift C (22:00 - 06:00)
+  startTime         String            // "06:00"
+  endTime           String            // "14:00"
+  productionEntries ProductionEntry[]
+}
+
+model ProductionEntry {
+  id             String         @id @default(uuid())
+  date           DateTime       // The calendar date of production
+  plantId        String
+  plant          Plant          @relation(fields: [plantId], references: [id], onDelete: Cascade)
+  lineId         String
+  line           ProductionLine @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  shiftId        String
+  shift          Shift          @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  unitsProduced  Int
+  scrapCount     Int
+  downtimeMinutes Int
+  loggedById     String
+  loggedBy       User           @relation(fields: [loggedById], references: [id])
+  createdAt      DateTime       @default(now())
+
+  @@index([date, plantId])
+}
+
+model Machine {
+  id                 String             @id @default(uuid())
+  name               String
+  code               String             @unique
+  type               String             // CNC, Injection Molding, Assembly, Press, Paint Shop
+  plantId            String
+  plant              Plant              @relation(fields: [plantId], references: [id], onDelete: Cascade)
+  lineId             String
+  line               ProductionLine     @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  criticality        Criticality
+  installDate        DateTime
+  lastMaintenanceDate DateTime
+  
+  // Sensor Thresholds
+  tempThresholdMin   Float              @default(15.0)
+  tempThresholdMax   Float              @default(85.0)
+  vibThresholdMin    Float              @default(0.0)
+  vibThresholdMax    Float              @default(5.0)
+  rpmThresholdMin    Float              @default(0.0)
+  rpmThresholdMax    Float              @default(3000.0)
+  
+  status             MachineStatus      @default(OPERATIONAL)
+  sensorReadings     SensorReading[]
+  maintenanceAlerts  MaintenanceAlert[]
+  maintenanceLogs    MaintenanceLog[]
+  defectEntries      DefectEntry[]
+  energyReadings     EnergyReading[]
+  createdAt          DateTime           @default(now())
+}
+
+model SensorReading {
+  id          String   @id @default(uuid())
+  machineId   String
+  machine     Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  temperature Float
+  vibration   Float
+  rpm         Float
+  timestamp   DateTime @default(now())
+
+  @@index([timestamp, machineId])
+}
+
+model MaintenanceAlert {
+  id               String        @id @default(uuid())
+  machineId        String
+  machine          Machine       @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  severity         AlertSeverity
+  status           AlertStatus   @default(ACTIVE)
+  triggerValue     String        // e.g., "Temp: 92.4°C"
+  message          String
+  aiRecommendation String?       @db.Text // Failure mode, urgency, action suggested
+  assignedToId     String?
+  assignedTo       User?         @relation(fields: [assignedToId], references: [id])
+  createdAt        DateTime      @default(now())
+  resolvedAt       DateTime?
+
+  @@index([status, machineId])
+}
+
+model MaintenanceLog {
+  id              String   @id @default(uuid())
+  machineId       String
+  machine         Machine  @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  technicianId    String
+  technician      User     @relation(fields: [technicianId], references: [id])
+  workDescription String   @db.Text
+  partsUsed       String   // e.g. "Gaskets, hydraulic fluid"
+  downtimeMinutes Int      @default(0)
+  completedAt     DateTime @default(now())
+}
+
+model RootCauseCategory {
+  id            String        @id @default(uuid())
+  name          String        @unique // Material Defect, Operator Error, Machine Calibration, Tool Wear, Design Flaw
+  description   String?
+  defectEntries DefectEntry[]
+}
+
+model DefectEntry {
+  id                  String             @id @default(uuid())
+  date                DateTime
+  plantId             String
+  plant               Plant              @relation(fields: [plantId], references: [id], onDelete: Cascade)
+  lineId              String
+  line                ProductionLine     @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  machineId           String?
+  machine             Machine?           @relation(fields: [machineId], references: [id], onDelete: SetNull)
+  partNumber          String             // e.g. "P-GEAR-440", "P-BRK-102"
+  defectType          String             // Crack, Dimension Deviation, Surface Scratch, Casting Void
+  quantity            Int
+  inspectorId         String
+  inspector           User               @relation(fields: [inspectorId], references: [id])
+  photoUrl            String?
+  description         String             @db.Text
+  rootCauseCategoryId String?
+  rootCauseCategory   RootCauseCategory? @relation(fields: [rootCauseCategoryId], references: [id], onDelete: SetNull)
+  status              DefectStatus       @default(PENDING)
+  createdAt           DateTime           @default(now())
+
+  @@index([date, plantId])
+}
+
+model EnergyReading {
+  id             String          @id @default(uuid())
+  plantId        String
+  plant          Plant           @relation(fields: [plantId], references: [id], onDelete: Cascade)
+  lineId         String?
+  line           ProductionLine? @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  machineId      String?
+  machine        Machine?        @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  kwhConsumption Float
+  costPerUnit    Float           @default(7.5) // Rs. per kWh
+  timestamp      DateTime        @default(now())
+
+  @@index([timestamp, plantId])
+}
+
+model AiCallLog {
+  id          String   @id @default(uuid())
+  serviceName String
+  prompt      String   @db.Text
+  response    String   @db.Text
+  tokensUsed  Int?
+  timestamp   DateTime @default(now())
+}

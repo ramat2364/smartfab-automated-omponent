@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Database Storage Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: smartfab_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smartfactory
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Cache and BullMQ Queue Service
+  redis:
+    image: redis:7-alpine
+    container_name: smartfab_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # Backend REST API and Background Workers
+  backend:
+    build: ./backend
+    container_name: smartfab_backend
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/smartfactory?schema=public
+      - REDIS_URL=redis://redis:6379
+      - JWT_ACCESS_SECRET=super-secret-access-token-key-1234567890
+      - JWT_REFRESH_SECRET=super-secret-refresh-token-key-0987654321
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=7d
+      - ANTHROPIC_API_KEY=
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  # Frontend Next.js Client Application
+  frontend:
+    build: ./frontend
+    container_name: smartfab_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5001/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:

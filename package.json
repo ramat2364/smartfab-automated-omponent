@@ -1,0 +1,13 @@
+{
+  "name": "smartfab-platform",
+  "version": "1.0.0",
+  "description": "Digital Transformation Platform for SmartFab Components",
+  "scripts": {
+    "docker:up": "docker-compose up --build -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "db:migrate": "docker-compose exec backend npx prisma migrate dev --name init",
+    "db:seed": "docker-compose exec backend npm run seed",
+    "setup": "npm run docker:up && echo 'Waiting for database...' && sleep 8 && npm run db:migrate && npm run db:seed"
+  }
+}

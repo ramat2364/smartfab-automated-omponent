@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-outfit), system-ui, -apple-system, sans-serif;
+  --color-brand-blue: #3b82f6;
+  --color-brand-cyan: #06b6d4;
+  --color-brand-emerald: #10b981;
+  --color-brand-rose: #f43f5e;
+  --color-brand-amber: #f59e0b;
+
+  /* Theme color mapping */
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-border-color: var(--border-color);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-inverse: var(--text-inverse);
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+
+  /* Sidebar Theme colors */
+  --color-sidebar-text-title: var(--sidebar-text-title);
+  --color-sidebar-text-muted: var(--sidebar-text-muted);
+  --color-sidebar-link-active-bg: var(--sidebar-link-active-bg);
+  --color-sidebar-link-active-text: var(--sidebar-link-active-text);
+  --color-sidebar-link-hover-bg: var(--sidebar-link-hover-bg);
+  --color-sidebar-link-hover-text: var(--sidebar-link-hover-text);
+  --color-sidebar-user-bg: var(--sidebar-user-bg);
+  --color-sidebar-user-border: var(--sidebar-user-border);
+
+  /* Navbar Theme colors */
+  --color-navbar-text-title: var(--navbar-text-title);
+  --color-navbar-text-muted: var(--navbar-text-muted);
+  --color-navbar-select-bg: var(--navbar-select-bg);
+  --color-navbar-select-border: var(--navbar-select-border);
+  --color-navbar-select-text: var(--navbar-select-text);
+  --color-navbar-option-bg: var(--navbar-option-bg);
+}
+
+/* Single Unified Professional Theme (Nazox / Enterprise Layout style) */
+:root {
+  --background: #f4f6fa;
+  --foreground: #0f172a;
+
+  /* Core Variables */
+  --bg-base: #f4f6fa;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #1f293d; /* Clean dark-slate sidebar */
+  --bg-navbar: #ffffff;  /* Pure white top header */
+  --border-color: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-inverse: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+
+  /* Sidebar */
+  --sidebar-text-title: #ffffff;
+  --sidebar-text-muted: #94a3b8;
+  --sidebar-link-active-bg: rgba(59, 130, 246, 0.15);
+  --sidebar-link-active-text: #3b82f6;
+  --sidebar-link-hover-bg: rgba(255, 255, 255, 0.04);
+  --sidebar-link-hover-text: #ffffff;
+  --sidebar-user-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-user-border: rgba(255, 255, 255, 0.08);
+
+  /* Navbar */
+  --navbar-text-title: #0f172a;
+  --navbar-text-muted: #64748b;
+  --navbar-select-bg: #f1f5f9;
+  --navbar-select-border: #e2e8f0;
+  --navbar-select-text: #0f172a;
+  --navbar-option-bg: #ffffff;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Card components */
+.glass-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  border-radius: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: var(--shadow-lg);
+}
+
+.sidebar-glass {
+  background: var(--bg-sidebar);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.navbar-glass {
+  background: var(--bg-navbar);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* High-fidelity pulse animation */
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.pulse-green {
+  animation: status-pulse 2s infinite ease-in-out;
+}
+
+/* ==========================================================================
+   CSS Utility Class Conversions (Scoped to .dashboard-theme to protect login page)
+   ========================================================================== */
+
+/* Headings & Text */
+.dashboard-theme h1, 
+.dashboard-theme h2, 
+.dashboard-theme h3, 
+.dashboard-theme h4, 
+.dashboard-theme h5, 
+.dashboard-theme h6 {
+  color: var(--text-primary) !important;
+}
+
+.dashboard-theme .text-white:not(.keep-white) {
+  color: var(--text-primary) !important;
+}
+
+.dashboard-theme .text-gray-100:not(.keep-text),
+.dashboard-theme .text-gray-200:not(.keep-text) {
+  color: var(--text-primary) !important;
+}
+
+.dashboard-theme .text-gray-300:not(.keep-text),
+.dashboard-theme .text-gray-400:not(.keep-text) {
+  color: var(--text-secondary) !important;
+}
+
+/* Sidebar Specific Exceptions: Keep dark sidebar readable */
+.dashboard-theme .sidebar-glass h1,
+.dashboard-theme .sidebar-glass h2,
+.dashboard-theme .sidebar-glass h3,
+.dashboard-theme .sidebar-glass h4,
+.dashboard-theme .sidebar-glass h5,
+.dashboard-theme .sidebar-glass h6 {
+  color: var(--sidebar-text-title) !important;
+}
+
+.dashboard-theme .sidebar-glass .text-sidebar-text-title {
+  color: var(--sidebar-text-title) !important;
+}
+
+.dashboard-theme .sidebar-glass .text-sidebar-text-muted {
+  color: var(--sidebar-text-muted) !important;
+}
+
+/* Backgrounds override (Tailwind dark backgrounds converted to theme surface) */
+.dashboard-theme .bg-gray-900:not(.keep-bg),
+.dashboard-theme .bg-gray-900\/60:not(.keep-bg),
+.dashboard-theme .bg-gray-900\/40:not(.keep-bg),
+.dashboard-theme .bg-\[\#0D1221\]:not(.keep-bg),
+.dashboard-theme .bg-\[\#080B13\]:not(.keep-bg) {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Deep base backgrounds mapping */
+.dashboard-theme .bg-gray-950:not(.keep-bg),
+.dashboard-theme .bg-gray-950\/40:not(.keep-bg),
+.dashboard-theme .bg-gray-950\/20:not(.keep-bg),
+.dashboard-theme .bg-\[\#090D1A\]:not(.keep-bg) {
+  background-color: var(--bg-base) !important;
+}
+
+/* Ensure report text / markdown content inside gray-950/40 is highly legible */
+.dashboard-theme .bg-gray-950\/40 {
+  color: var(--text-primary) !important;
+}
+
+/* Border overrides */
+.dashboard-theme .border-gray-800:not(.keep-border),
+.dashboard-theme .border-gray-800\/80:not(.keep-border),
+.dashboard-theme .border-gray-700:not(.keep-border) {
+  border-color: var(--border-color) !important;
+}
+
+/* Recharts grid/line colors overrides */
+.dashboard-theme .recharts-cartesian-grid-horizontal line,
+.dashboard-theme .recharts-cartesian-grid-vertical line {
+  stroke: var(--border-color) !important;
+  stroke-opacity: 0.8;
+}
+
+.dashboard-theme .recharts-text {
+  fill: var(--text-secondary) !important;
+}
+
+.dashboard-theme .recharts-tooltip-cursor {
+  fill: rgba(0, 0, 0, 0.03) !important;
+}
+
