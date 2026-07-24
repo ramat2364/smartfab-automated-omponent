@@ -99,11 +99,27 @@ const connectServices = async () => {
     // Run Prisma migrations in background safely
     try {
       const { exec } = require('child_process');
-      exec('npx prisma migrate deploy', (err: any, stdout: any, stderr: any) => {
+      exec('npx prisma migrate deploy', async (err: any, stdout: any, stderr: any) => {
         if (err) {
           console.warn('Prisma migrate deploy warning:', stderr || err.message);
         } else if (stdout) {
           console.log('Prisma migrations executed successfully:\n', stdout);
+        }
+        // Auto-seed if database contains 0 users
+        try {
+          const userCount = await prisma.user.count();
+          if (userCount === 0) {
+            console.log('No users found in database. Auto-seeding initial database data...');
+            exec('npx ts-node prisma/seed.ts', (sErr: any, sStdout: any, sStderr: any) => {
+              if (sErr) {
+                console.warn('Auto-seed warning:', sStderr || sErr.message);
+              } else {
+                console.log('Database auto-seeded successfully:\n', sStdout);
+              }
+            });
+          }
+        } catch (sErr) {
+          console.warn('User count check failed:', sErr);
         }
       });
     } catch (migErr) {
