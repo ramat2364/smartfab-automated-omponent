@@ -1,13 +1,16 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
+// Store system environment variables set by cloud platforms (e.g. Railway)
+const systemPort = process.env.PORT;
+
 // Load env variables dynamically based on NODE_ENV
 const envFile = process.env.NODE_ENV === 'production' ? '../.env.production' : '../.env';
 dotenv.config({ path: path.join(__dirname, envFile) });
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export const config = {
-  port: parseInt(process.env.PORT || '5001', 10),
+  port: systemPort ? parseInt(systemPort, 10) : parseInt(process.env.PORT || '5001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
   backendPublicUrl: process.env.BACKEND_PUBLIC_URL || 'http://localhost:5001',
