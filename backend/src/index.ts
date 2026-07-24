@@ -70,10 +70,24 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Start HTTP Listening Immediately for Railway / Cloud Health Probes
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
-console.log(`[Startup] Environment PORT: ${process.env.PORT}, Bound PORT: ${PORT}`);
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`SmartFab Automated Components Backend running on http://0.0.0.0:${PORT}`);
+const primaryPort = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
+console.log(`[Startup] Environment PORT: ${process.env.PORT}, Bound PORT: ${primaryPort}`);
+
+app.listen(primaryPort, '0.0.0.0', () => {
+  console.log(`SmartFab Automated Components Backend running on http://0.0.0.0:${primaryPort}`);
+});
+
+// Bind to secondary ports so Railway proxy reaches app regardless of domain target port settings
+const secondaryPorts = [8080, 3000, 5001].filter(p => p !== primaryPort);
+secondaryPorts.forEach(p => {
+  try {
+    const srv = app.listen(p, '0.0.0.0', () => {
+      console.log(`SmartFab Backend also listening on fallback port http://0.0.0.0:${p}`);
+    });
+    srv.on('error', () => { /* ignore port in use */ });
+  } catch (err) {
+    /* ignore port in use */
+  }
 });
 
 // Connect to Database & BullMQ Background Workers Asynchronously
