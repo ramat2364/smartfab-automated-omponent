@@ -23,6 +23,7 @@ export default function MachineDetailPage({ params }: { params: Promise<{ id: st
   const { apiFetch } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const fetchMachineDetail = async () => {
     try {
@@ -30,9 +31,14 @@ export default function MachineDetailPage({ params }: { params: Promise<{ id: st
       if (res.ok) {
         const result = await res.json();
         setData(result);
+        setErrorMsg(null);
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        setErrorMsg(errJson.message || 'Machine asset details not found.');
       }
     } catch (err) {
       console.error('Error fetching machine details:', err);
+      setErrorMsg('Failed to load machine asset details. Please try again.');
     }
   };
 
@@ -58,9 +64,14 @@ export default function MachineDetailPage({ params }: { params: Promise<{ id: st
   if (!data || !data.machine) {
     return (
       <DashboardShell>
-        <div className="text-center py-12">
-          <p className="text-gray-400">Machine asset details not found.</p>
-          <Link href="/machines" className="text-brand-blue hover:underline mt-4 inline-block">Return to Registry</Link>
+        <div className="text-center py-16 max-w-md mx-auto space-y-4">
+          <div className="p-4 bg-gray-900/60 rounded-xl border border-gray-800">
+            <p className="text-gray-300 font-semibold text-sm">{errorMsg || 'Machine asset details not found.'}</p>
+            <p className="text-xs text-gray-500 mt-1">Check your plant access scope or select another machine asset from the registry.</p>
+          </div>
+          <Link href="/machines" className="px-4 py-2 bg-brand-blue/10 border border-brand-blue/30 text-brand-blue hover:bg-brand-blue/20 rounded-lg text-xs font-bold transition-colors inline-block">
+            Return to Registry
+          </Link>
         </div>
       </DashboardShell>
     );
