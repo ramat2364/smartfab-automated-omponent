@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     'localhost:3000',
     '127.0.0.1:3000'
   ],
+  experimental: {
+    workerThreads: false,
+    cpus: 1
+  },
   async rewrites() {
     const rawBackendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://smartfab-automated-omponent-production.up.railway.app';
     const backendHost = rawBackendUrl.replace(/\/api\/?$/, '');
