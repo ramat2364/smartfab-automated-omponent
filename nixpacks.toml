@@ -1,6 +1,9 @@
 # Root Nixpacks Configuration for Railway Deployment
 providers = ["node"]
 
+[variables]
+PRISMA_HIDE_UPDATE_MESSAGE = "true"
+
 [phases.setup]
 nixPkgs = ["nodejs_20", "openssl", "ca-certificates"]
 
@@ -9,9 +12,9 @@ cmds = ["npm install --prefix backend", "npm install --prefix frontend"]
 
 [phases.build]
 cmds = [
-  "cd backend && npx --no-install prisma generate && npm run build",
+  "cd backend && npx prisma generate && npm run build",
   "cd frontend && npm run build"
 ]
 
 [start]
-cmd = "cd backend && npx --no-install prisma migrate deploy && npm run seed && npm start"
+cmd = "cd backend && npx prisma migrate deploy && npm run seed && npm start"

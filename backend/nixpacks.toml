@@ -1,6 +1,9 @@
 # Nixpacks Configuration for Railway Deployment
 providers = ["node"]
 
+[variables]
+PRISMA_HIDE_UPDATE_MESSAGE = "true"
+
 [phases.setup]
 nixPkgs = ["nodejs_20", "openssl", "ca-certificates"]
 

@@ -2,6 +2,8 @@ FROM node:20-slim
 
 WORKDIR /app
 
+ENV PRISMA_HIDE_UPDATE_MESSAGE=true
+
 # Install OpenSSL and CA certificates for Prisma runtime
 RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
