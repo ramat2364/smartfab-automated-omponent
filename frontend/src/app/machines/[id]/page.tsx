@@ -15,9 +15,9 @@ import {
 } from 'recharts';
 import { ArrowLeft, Clock, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, User, Wrench } from 'lucide-react';
 import Link from 'next/link';
-import MaintenanceLogsPage from '../logs/page';
-import LiveHealthPage from '../live/page';
-import PredictiveAlertsPage from '../alerts/page';
+import MaintenanceLogsPage from '@/app/machines/logs/page';
+import LiveHealthPage from '@/app/machines/live/page';
+import PredictiveAlertsPage from '@/app/machines/alerts/page';
 
 export default function MachineDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
