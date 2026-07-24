@@ -14,11 +14,23 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { ArrowLeft, Clock, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, User, Wrench } from 'lucide-react';
-import Link from 'next/link';
+import MaintenanceLogsPage from '../logs/page';
+import LiveHealthPage from '../live/page';
+import PredictiveAlertsPage from '../alerts/page';
 
 export default function MachineDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const machineId = resolvedParams.id;
+
+  if (machineId === 'logs') {
+    return <MaintenanceLogsPage />;
+  }
+  if (machineId === 'live') {
+    return <LiveHealthPage />;
+  }
+  if (machineId === 'alerts') {
+    return <PredictiveAlertsPage />;
+  }
   
   const { apiFetch } = useAuth();
   const [data, setData] = useState<any>(null);
