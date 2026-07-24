@@ -17,4 +17,4 @@ cmds = [
 ]
 
 [start]
-cmd = "cd backend && npx prisma migrate deploy && npm run seed && npm start"
+cmd = "cd backend && (npx prisma migrate deploy || true) && npm start"

@@ -9,6 +9,11 @@ const envFile = process.env.NODE_ENV === 'production' ? '../.env.production' : '
 dotenv.config({ path: path.join(__dirname, envFile) });
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
+// Restore original system PORT if set by host environment (Railway/Heroku/AWS)
+if (systemPort) {
+  process.env.PORT = systemPort;
+}
+
 export const config = {
   port: systemPort ? parseInt(systemPort, 10) : parseInt(process.env.PORT || '5001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',

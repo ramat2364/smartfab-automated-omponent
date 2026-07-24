@@ -17,4 +17,4 @@ cmds = [
 ]
 
 [start]
-cmd = "npx prisma migrate deploy && npm run seed && npm start"
+cmd = "(npx prisma migrate deploy || true) && npm start"

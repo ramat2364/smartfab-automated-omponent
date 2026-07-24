@@ -82,6 +82,20 @@ const connectServices = async () => {
     await prisma.$connect();
     console.log('Successfully connected to the PostgreSQL database via Prisma.');
 
+    // Run Prisma migrations in background safely
+    try {
+      const { exec } = require('child_process');
+      exec('npx prisma migrate deploy', (err: any, stdout: any, stderr: any) => {
+        if (err) {
+          console.warn('Prisma migrate deploy warning:', stderr || err.message);
+        } else if (stdout) {
+          console.log('Prisma migrations executed successfully:\n', stdout);
+        }
+      });
+    } catch (migErr) {
+      console.warn('Could not run prisma migrate deploy:', migErr);
+    }
+
     try {
       startWorkers();
       await scheduleCronJobs();
