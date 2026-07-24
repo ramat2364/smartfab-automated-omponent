@@ -14,6 +14,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { ArrowLeft, Clock, AlertTriangle, CheckCircle2, ShieldAlert, Sparkles, User, Wrench } from 'lucide-react';
+import Link from 'next/link';
 import MaintenanceLogsPage from '../logs/page';
 import LiveHealthPage from '../live/page';
 import PredictiveAlertsPage from '../alerts/page';
