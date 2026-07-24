@@ -2,17 +2,16 @@
 providers = ["node"]
 
 [phases.setup]
-nixPkgs = ["nodejs_20", "openssl", "openssl_1_1", "ca-certificates"]
+nixPkgs = ["nodejs_20", "openssl", "ca-certificates"]
 
 [phases.install]
 cmds = ["npm install"]
 
 [phases.build]
 cmds = [
-  "mkdir -p /lib /usr/lib /usr/lib/x86_64-linux-gnu 2>/dev/null || true",
-  "npx prisma generate",
+  "npx --no-install prisma generate",
   "npm run build"
 ]
 
 [start]
-cmd = "npx prisma migrate deploy && npm run seed && npm start"
+cmd = "npx --no-install prisma migrate deploy && npm run seed && npm start"

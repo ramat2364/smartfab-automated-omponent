@@ -2,16 +2,16 @@
 providers = ["node"]
 
 [phases.setup]
-nixPkgs = ["nodejs_20", "openssl", "openssl_1_1", "ca-certificates"]
+nixPkgs = ["nodejs_20", "openssl", "ca-certificates"]
 
 [phases.install]
 cmds = ["npm install --prefix backend", "npm install --prefix frontend"]
 
 [phases.build]
 cmds = [
-  "cd backend && npx prisma generate && npm run build",
+  "cd backend && npx --no-install prisma generate && npm run build",
   "cd frontend && npm run build"
 ]
 
 [start]
-cmd = "cd backend && npx prisma migrate deploy && npm run seed && npm start"
+cmd = "cd backend && npx --no-install prisma migrate deploy && npm run seed && npm start"
