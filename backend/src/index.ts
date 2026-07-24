@@ -65,16 +65,18 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: err.message || 'Internal server error' });
 });
 
-// Start Server and BullMQ
+// Start HTTP Listening Immediately for Railway / Cloud Health Probes
 const PORT = config.port;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`SmartFab Automated Components Backend running on http://0.0.0.0:${PORT}`);
+});
 
-const startServer = async () => {
+// Connect to Database & BullMQ Background Workers Asynchronously
+const connectServices = async () => {
   try {
-    // 1. Verify DB Connection
     await prisma.$connect();
     console.log('Successfully connected to the PostgreSQL database via Prisma.');
 
-    // 2. Start BullMQ background systems
     try {
       startWorkers();
       await scheduleCronJobs();
@@ -82,15 +84,9 @@ const startServer = async () => {
     } catch (queueError) {
       console.warn('Warning: Could not start BullMQ queue system (Redis might be offline). Running HTTP server only.', queueError);
     }
-
-    // 3. Start Listening
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`SmartFab Automated Components Backend running on http://0.0.0.0:${PORT}`);
-    });
   } catch (err) {
-    console.error('Fatal: Failed to connect to database or start backend server:', err);
-    process.exit(1);
+    console.error('Warning: Failed to connect to database on startup. Retrying in background...', err);
   }
 };
 
-startServer();
+connectServices();
