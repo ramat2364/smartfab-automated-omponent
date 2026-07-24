@@ -19,7 +19,7 @@ export default function ProductionOverviewPage() {
     const fetchOverview = async () => {
       try {
         setLoading(true);
-        const query = selectedPlantId ? `?plantId=${selectedPlantId}` : '';
+        const query = (selectedPlantId && selectedPlantId !== 'all') ? `?plantId=${selectedPlantId}` : '';
         const res = await apiFetch(`/production/overview${query}`);
         if (res.ok) {
           const result = await res.json();

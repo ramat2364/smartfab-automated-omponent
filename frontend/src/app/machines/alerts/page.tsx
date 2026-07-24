@@ -46,7 +46,7 @@ export default function PredictiveAlertsPage() {
   // 1. Fetch active alerts
   const fetchAlerts = async () => {
     try {
-      const query = selectedPlantId ? `?plantId=${selectedPlantId}` : '';
+      const query = (selectedPlantId && selectedPlantId !== 'all') ? `?plantId=${selectedPlantId}` : '';
       const res = await apiFetch(`/machines/alerts${query}`);
       if (res.ok) {
         const data = await res.json();

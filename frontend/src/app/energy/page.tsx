@@ -33,7 +33,7 @@ export default function EnergyPage() {
   const fetchEnergyData = async () => {
     try {
       setLoading(true);
-      const query = selectedPlantId ? `?plantId=${selectedPlantId}` : '';
+      const query = (selectedPlantId && selectedPlantId !== 'all') ? `?plantId=${selectedPlantId}` : '';
       
       const [overRes, breakRes, patRes] = await Promise.all([
         apiFetch(`/energy/overview${query}`),

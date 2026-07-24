@@ -28,7 +28,7 @@ export default function QualityRootCausePage() {
     const fetchRcaData = async () => {
       try {
         setLoading(true);
-        const query = selectedPlantId ? `?plantId=${selectedPlantId}` : '';
+        const query = (selectedPlantId && selectedPlantId !== 'all') ? `?plantId=${selectedPlantId}` : '';
         const res = await apiFetch(`/quality/root-cause${query}`);
         if (res.ok) {
           const result = await res.json();

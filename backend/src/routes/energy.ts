@@ -10,7 +10,7 @@ router.get('/overview', authenticateToken, checkPlantAccess, async (req: Authent
     const { plantId, range } = req.query; // range: daily, weekly, monthly
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;
@@ -109,7 +109,7 @@ router.get('/machines', authenticateToken, checkPlantAccess, async (req: Authent
     const { plantId } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;

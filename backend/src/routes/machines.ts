@@ -11,7 +11,7 @@ router.get('/', authenticateToken, checkPlantAccess, async (req: AuthenticatedRe
     const { plantId, lineId, status } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;
@@ -52,7 +52,7 @@ router.get('/live', authenticateToken, checkPlantAccess, async (req: Authenticat
     const { plantId } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;
@@ -118,7 +118,7 @@ router.get('/alerts', authenticateToken, checkPlantAccess, async (req: Authentic
       status: AlertStatus.ACTIVE
     };
 
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.machine = { plantId: plantId as string };
     } else if (req.user?.plantAccessId) {
       whereClause.machine = { plantId: req.user.plantAccessId };
@@ -160,7 +160,7 @@ router.get('/logs', authenticateToken, checkPlantAccess, async (req: Authenticat
     const { plantId } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.machine = { plantId: plantId as string };
     } else if (req.user?.plantAccessId) {
       whereClause.machine = { plantId: req.user.plantAccessId };

@@ -53,7 +53,7 @@ router.get('/overview', authenticateToken, checkPlantAccess, async (req: Authent
     const { plantId } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;
@@ -230,7 +230,7 @@ router.get('/history', authenticateToken, checkPlantAccess, async (req: Authenti
     const whereClause: any = {};
     
     // Plant filtering
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;

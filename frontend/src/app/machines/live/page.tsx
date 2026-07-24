@@ -36,7 +36,7 @@ export default function LiveHealthMonitoringPage() {
   const fetchLiveMetrics = async (showLoading = false) => {
     try {
       if (showLoading) setLoading(true);
-      const query = selectedPlantId ? `?plantId=${selectedPlantId}` : '';
+      const query = (selectedPlantId && selectedPlantId !== 'all') ? `?plantId=${selectedPlantId}` : '';
       const res = await apiFetch(`/machines/live${query}`);
       if (res.ok) {
         const result = await res.json();

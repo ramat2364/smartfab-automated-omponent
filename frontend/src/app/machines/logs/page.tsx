@@ -78,7 +78,7 @@ export default function MaintenanceLogsPage() {
   // 1. Fetch data
   const fetchData = async () => {
     try {
-      const query = selectedPlantId ? `?plantId=${selectedPlantId}` : '';
+      const query = (selectedPlantId && selectedPlantId !== 'all') ? `?plantId=${selectedPlantId}` : '';
       
       const [machinesRes, logsRes] = await Promise.all([
         apiFetch(`/machines${query}`),

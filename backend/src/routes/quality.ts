@@ -45,7 +45,7 @@ router.get('/defects', authenticateToken, checkPlantAccess, async (req: Authenti
     const { plantId, lineId, partNumber, status, startDate, endDate, search } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;
@@ -151,7 +151,7 @@ router.get('/root-cause', authenticateToken, checkPlantAccess, async (req: Authe
     const { plantId } = req.query;
 
     const whereClause: any = {};
-    if (plantId) {
+    if (plantId && plantId !== 'all' && plantId !== 'undefined' && plantId !== 'null') {
       whereClause.plantId = plantId as string;
     } else if (req.user?.plantAccessId) {
       whereClause.plantId = req.user.plantAccessId;
