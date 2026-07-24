@@ -9,9 +9,9 @@ cmds = ["npm install"]
 
 [phases.build]
 cmds = [
-  "npx --no-install prisma generate",
+  "npx prisma generate",
   "npm run build"
 ]
 
 [start]
-cmd = "npx --no-install prisma migrate deploy && npm run seed && npm start"
+cmd = "npx prisma migrate deploy && npm run seed && npm start"
