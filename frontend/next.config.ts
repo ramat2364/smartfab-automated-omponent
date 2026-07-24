@@ -7,10 +7,12 @@ const nextConfig: NextConfig = {
     '127.0.0.1:3000'
   ],
   async rewrites() {
+    const rawBackendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://smartfab-automated-omponent-production.up.railway.app';
+    const backendHost = rawBackendUrl.replace(/\/api\/?$/, '');
     return [
       {
         source: '/api/:path*',
-        destination: 'http://127.0.0.1:5001/api/:path*',
+        destination: `${backendHost}/api/:path*`,
       },
     ];
   },
