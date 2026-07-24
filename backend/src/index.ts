@@ -45,7 +45,11 @@ app.use(morgan('dev'));
 // Static uploads serving
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Health Check
+// Health Check Endpoints
+app.get('/', (req, res) => {
+  res.json({ status: 'healthy', service: 'SmartFab API Backend', timestamp: new Date() });
+});
+
 app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date() });
 });
@@ -66,8 +70,8 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Start HTTP Listening Immediately for Railway / Cloud Health Probes
-const PORT = config.port;
-console.log(`[Startup] Environment PORT: ${process.env.PORT}, Config PORT: ${config.port}`);
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : config.port;
+console.log(`[Startup] Environment PORT: ${process.env.PORT}, Bound PORT: ${PORT}`);
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`SmartFab Automated Components Backend running on http://0.0.0.0:${PORT}`);
 });
